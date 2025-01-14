@@ -1,0 +1,122 @@
+body { margin: 0; }
+#map {
+  width: 100%;
+  height: 100vh;
+  margin: 0;
+  padding: 0;
+}
+.shop-item {
+  padding: 10px;
+  border-bottom: 1px solid #ccc;
+  cursor: pointer;
+}
+.shop-item:hover {
+  background: #f0f0f0;
+}
+.mappls-btn {
+  background: #007bff;
+  color: white;
+  border: none;
+  padding: 5px 10px;
+  border-radius: 4px;
+  margin-top: 5px;
+  cursor: pointer;
+}
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: none;
+  justify-content: center;
+  align-items: center;
+}
+.modal {
+  background: #fff;
+  padding: 20px;
+  width: 300px;
+  border-radius: 8px;
+}
+.modal-buttons {
+  display: flex;
+  justify-content: flex-end;
+  margin-top: 10px;
+}
+.modal-buttons button {
+  margin-left: 5px;
+}
+.container {
+  display: flex;
+  height: 100vh;
+  width: 100%;
+}
+#nearby_search {
+  width: 300px;
+  height: 100vh !important;
+  margin: 0 !important;
+  padding: 10px;
+  overflow-y: auto;
+  background: white;
+  box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+}
+.redirect-btn {
+  background: #4CAF50;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  margin-top: 8px;
+  cursor: pointer;
+  width: 100%;
+}
+.redirect-btn:hover {
+  background: #45a049;
+}
+
+.appointment-modal-overlay {
+  position: fixed;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
+  background: rgba(0, 0, 0, 0.5);
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  z-index: 1000;
+}
+
+.appointment-modal {
+  background: white;
+  padding: 20px;
+  border-radius: 8px;
+  width: 400px;
+}
+
+.appointment-modal form {
+  display: flex;
+  flex-direction: column;
+  gap: 15px;
+}
+
+.appointment-modal select,
+.appointment-modal input {
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+}
+
+.book-btn {
+  background: #2196F3;
+  color: white;
+  border: none;
+  padding: 8px 16px;
+  border-radius: 4px;
+  margin-top: 8px;
+  margin-bottom: 8px;
+  cursor: pointer;
+  width: 100%;
+}
+
+.book-btn:hover {
+  background: #1976D2;
+}

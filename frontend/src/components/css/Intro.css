@@ -1,0 +1,75 @@
+.intro-section {
+    display: flex;
+    justify-content: space-between;
+    align-items: center;
+    padding: 2rem;
+    background-color: #f9f9f9;
+    font-family: 'Arial', sans-serif;
+  }
+  
+  .content-container {
+    max-width: 50%;
+  }
+  
+  .sub-heading {
+    font-size: 1.2rem;
+    color: #a27b5c;
+    margin-bottom: 0.5rem;
+  }
+  
+  .main-heading {
+    font-size: 2.5rem;
+    color: #5c4033;
+  }
+  
+  .year {
+    font-size: 1.5rem;
+    color: #a27b5c;
+    margin-bottom: 1rem;
+  }
+  
+  .logo img {
+    width: 80px;
+    margin: 1rem 0;
+  }
+  
+  .description {
+    font-size: 1rem;
+    color: #333;
+    line-height: 1.6;
+  }
+  
+  .cta-button {
+    background-color: #5c4033;
+    color: #fff;
+    border: none;
+    padding: 0.8rem 1.5rem;
+    margin-top: 1rem;
+    cursor: pointer;
+    font-size: 1rem;
+    border-radius: 5px;
+    transition: background-color 0.3s ease;
+  }
+  
+  .cta-button:hover {
+    background-color: #a27b5c;
+  }
+  
+  .images-container {
+    display: flex;
+    flex-direction: column;
+    gap: 1rem;
+  }
+  
+  .image-1,
+  .image-2 {
+    width: 300px;
+    height: auto;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.1);
+    border-radius: 8px;
+  }
+  
+  .image-2 {
+    margin-left: 2rem;
+  }
+  

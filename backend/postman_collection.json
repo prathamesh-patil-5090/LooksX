@@ -1,0 +1,196 @@
+{
+  "info": {
+    "name": "LooksX Barbershop API",
+    "schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json"
+  },
+  "item": [
+    {
+      "name": "Authentication",
+      "item": [
+        {
+          "name": "Register Customer",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": {
+                "username": "customer1",
+                "email": "customer@example.com",
+                "password": "password123",
+                "role": "customer"
+              }
+            },
+            "url": "http://localhost:8800/api/auth/login"
+          }
+        },
+        {
+          "name": "Register Barber",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": {
+                "username": "barber1",
+                "email": "barber@example.com",
+                "password": "password123",
+                "role": "barber"
+              }
+            },
+            "url": "http://localhost:8800/api/auth/register",
+            "description": "Register as barber first, then use the token to register shop"
+          }
+        },
+        {
+          "name": "Login",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": {
+                "email": "user@example.com",
+                "password": "password123"
+              }
+            },
+            "url": "http://localhost:8800/api/auth/login",
+            "description": "Use this to get either USER_TOKEN or BARBER_TOKEN"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Barber Operations",
+      "item": [
+        {
+          "name": "Register Shop",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer BARBER_TOKEN",
+                "description": "Token received after barber login"
+              },
+              {
+                "key": "Content-Type",
+                "value": "application/json"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": {
+                "name": "Style Studio",
+                "address": {
+                  "street": "123 Main St",
+                  "city": "New York",
+                  "state": "NY",
+                  "zipCode": "10001"
+                },
+                "services": [
+                  {
+                    "name": "Haircut",
+                    "price": 30
+                  }
+                ]
+              }
+            },
+            "url": "http://localhost:8800/api/barber/shops"
+          }
+        },
+        {
+          "name": "View Shop Appointments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer BARBER_TOKEN"
+              }
+            ],
+            "url": "http://localhost:8800/api/barber/appointments"
+          }
+        },
+        {
+          "name": "Update Appointment Status",
+          "request": {
+            "method": "PATCH",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer BARBER_TOKEN"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": {
+                "status": "confirmed"
+              }
+            },
+            "url": "http://localhost:8800/api/barber/appointments/APPOINTMENT_ID"
+          }
+        }
+      ]
+    },
+    {
+      "name": "Customer Operations",
+      "item": [
+        {
+          "name": "Book Appointment",
+          "request": {
+            "method": "POST",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer USER_TOKEN"
+              }
+            ],
+            "body": {
+              "mode": "raw",
+              "raw": {
+                "name": "John Doe",
+                "street": "123 Main St",
+                "city": "New York",
+                "state": "NY",
+                "zipCode": "10001",
+                "appointmentDate": "2024-02-01T10:00:00.000Z",
+                "service": "Haircut",
+                "shopName": "Style Studio"
+              }
+            },
+            "url": "http://localhost:8800/api/appointments"
+          }
+        },
+        {
+          "name": "View My Appointments",
+          "request": {
+            "method": "GET",
+            "header": [
+              {
+                "key": "Authorization",
+                "value": "Bearer USER_TOKEN"
+              }
+            ],
+            "url": "http://localhost:8800/api/appointments"
+          }
+        }
+      ]
+    }
+  ]
+}
