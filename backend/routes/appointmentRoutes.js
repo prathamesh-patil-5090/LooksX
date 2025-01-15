@@ -54,7 +54,7 @@ router.patch('/:id/status', protect, async (req, res) => {
     res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     
     try {
-        const { id } = req.params;  // This will be 6783f0fe7276e77a23a30e30 in your case
+        const { id } = req.params;
         const { status } = req.body;
         
         console.log('Status update request:', {
