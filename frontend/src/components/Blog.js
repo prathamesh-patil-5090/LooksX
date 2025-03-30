@@ -65,9 +65,9 @@ const reviews = [
 ];
 
 const BlogCard = ({ review }) => (
-  <div className="bg-white/5 rounded-lg overflow-hidden hover:bg-white/10 transition-all duration-300 border border-gray-800 hover:border-[#D4B86A]">
+  <div className="bg-white/5 rounded-lg overflow-hidden hover:bg-white/10 transition-all duration-300 border border-gray-800 hover:border-[#D4B86A] h-full flex flex-col">
     <img src={review.image} alt={review.title} className="w-full h-48 object-cover" />
-    <div className="p-6">
+    <div className="p-6 flex-grow flex flex-col">
       <div className="flex items-center gap-4 mb-3 text-sm text-gray-400">
         <span className="flex items-center gap-2">
           <FaCalendarAlt className="text-[#D4B86A]" /> {review.date}
@@ -82,8 +82,8 @@ const BlogCard = ({ review }) => (
           <FaStar key={i} />
         ))}
       </div>
-      <p className="text-gray-300 mb-4">{review.content}</p>
-      <div className="flex flex-wrap gap-2">
+      <p className="text-gray-300 mb-4 flex-grow">{review.content}</p>
+      <div className="flex flex-wrap gap-2 mt-auto">
         {review.tags.map((tag, index) => (
           <span key={index} className="text-xs bg-[#D4B86A]/20 text-[#D4B86A] px-3 py-1 rounded-full">
             {tag}
@@ -98,7 +98,7 @@ const Blog = () => {
   return (
     <div className="min-h-screen bg-[#1A1F2C] pt-20">
       <div className="container mx-auto px-4 py-16">
-        <div className="text-center mb-16">
+        <div className="mr-5 text-center mb-16">
           <h1 className="text-4xl font-bold text-[#D4B86A] mb-4">Client Reviews</h1>
           <p className="text-gray-400 max-w-2xl mx-auto">
             Read what our valued clients have to say about their experience at LooksX. 
@@ -113,7 +113,7 @@ const Blog = () => {
         </div>
 
         {/* Featured Quote */}
-        <div className="mt-16 bg-white/5 rounded-lg p-8 text-center relative">
+        <div className="ml-5 mt-16 bg-white/5 rounded-lg p-8 text-center relative">
           <FaQuoteRight className="text-[#D4B86A]/20 text-6xl absolute top-4 right-4" />
           <p className="text-2xl text-gray-300 italic mb-4">
             "Where style meets sophistication. LooksX has redefined the modern grooming experience."

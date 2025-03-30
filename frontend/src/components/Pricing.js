@@ -1,31 +1,31 @@
-import React from 'react';
-import { GiScissors, GiRazor, GiHairStrands, GiBeard, GiRose } from 'react-icons/gi';
+import React, { useState } from 'react';
+import { GiScissors, GiRazor, GiHairStrands, GiBeard, GiRose, GiLeatherBoot, GiSparkles, GiFaceToFace } from 'react-icons/gi';
 import { MdSpa, MdFace, MdColorLens, MdChildCare } from 'react-icons/md';
 import { FaRegClock, FaGlasses } from 'react-icons/fa';
 import { BiPaintRoll } from 'react-icons/bi';
 
 const PriceCard = ({ title, price, duration, services, icon: Icon }) => (
-  <div className="group p-8 bg-black/30 backdrop-blur-sm rounded-2xl border border-gray-800 transition-all duration-300 hover:border-[#D4B86A] hover:transform hover:-translate-y-2">
-    <div className="flex items-center gap-4 mb-6">
-      <div className="w-12 h-12 bg-gradient-to-br from-[#D4B86A] to-[#B89B5D] rounded-lg flex items-center justify-center">
-        <Icon className="text-2xl text-black" />
+  <div className="group p-3 sm:p-4 md:p-6 bg-black/30 backdrop-blur-sm rounded-2xl border border-gray-800 transition-all duration-300 hover:border-[#D4B86A] hover:transform hover:-translate-y-2">
+    <div className="flex items-center gap-2 md:gap-3 mb-3 md:mb-4">
+      <div className="w-8 h-8 md:w-10 md:h-10 bg-gradient-to-br from-[#D4B86A] to-[#B89B5D] rounded-lg flex items-center justify-center">
+        <Icon className="text-lg md:text-xl text-black" />
       </div>
       <div>
-        <h3 className="text-2xl font-bold text-[#D4B86A]">{title}</h3>
+        <h3 className="text-lg md:text-xl font-bold text-[#D4B86A]">{title}</h3>
         <div className="flex items-center gap-2 text-gray-400">
-          <FaRegClock className="text-sm" />
-          <span className="text-sm">{duration}</span>
+          <FaRegClock className="text-xs" />
+          <span className="text-xs">{duration}</span>
         </div>
       </div>
     </div>
-    <div className="mb-6">
-      <p className="text-4xl text-white font-bold mb-1">₹{price}</p>
-      <p className="text-gray-400 text-sm">Starting price</p>
+    <div className="mb-3 md:mb-4">
+      <p className="text-xl sm:text-2xl md:text-3xl text-white font-bold mb-1">₹{price}</p>
+      <p className="text-xs text-gray-400">Starting price</p>
     </div>
-    <ul className="space-y-3">
+    <ul className="space-y-1.5 sm:space-y-2">
       {services.map((service, index) => (
-        <li key={index} className="flex items-center gap-2 text-gray-300">
-          <div className="w-1.5 h-1.5 rounded-full bg-[#D4B86A]" />
+        <li key={index} className="flex items-center gap-2 text-sm text-gray-300">
+          <div className="w-1.5 h-1.5 rounded-full bg-[#D4B86A] flex-shrink-0" />
           {service}
         </li>
       ))}
@@ -34,6 +34,9 @@ const PriceCard = ({ title, price, duration, services, icon: Icon }) => (
 );
 
 const Pricing = () => {
+  const [currentPage, setCurrentPage] = useState(0);
+  const itemsPerPage = 8;
+
   const priceData = [
     {
       title: 'Classic Haircut',
@@ -130,24 +133,113 @@ const Pricing = () => {
         'Balayage',
         'Toner Treatment'
       ]
+    },
+    {
+      title: "Color Artistry",
+      price: '2499',
+      duration: '150 mins',
+      icon: MdColorLens,
+      services: [
+        'Expert color services including balayage, highlights, and creative coloring techniques performed by our certified colorists.'
+      ]
+    },
+    {
+      title: "Bridal Excellence",
+      price: '9999',
+      duration: '300 mins',
+      icon: GiRose,
+      services: [
+        'Comprehensive bridal packages featuring hair styling, makeup, and spa treatments for your special day.'
+      ]
+    },
+    {
+      title: "Hair Therapy",
+      price: '1999',
+      duration: '120 mins',
+      icon: GiHairStrands,
+      services: [
+        'Advanced hair treatments including keratin smoothing, deep conditioning, and scalp treatments for optimal hair health.'
+      ]
+    },
+    {
+      title: "Royal Package",
+      price: '4999',
+      duration: '240 mins',
+      icon: GiSparkles,
+      services: [
+        'A complete head-to-toe transformation including premium haircut, color, spa treatments, and styling services.'
+      ]
+    },
+    {
+      title: "Kids' Corner",
+      price: '399',
+      duration: '45 mins',
+      icon: MdChildCare,
+      services: [
+        'Child-friendly haircuts and styling in a fun, comfortable environment with experienced youth specialists.'
+      ]
+    },
+    {
+      title: "Express Services",
+      price: '999',
+      duration: '30 mins',
+      icon: FaRegClock,
+      services: [
+        'Quick touch-ups and express styling services for those on the go, without compromising on quality.'
+      ]
+    },
+    {
+      title: "Advanced Skincare",
+      price: '2999',
+      duration: '90 mins',
+      icon: MdFace,
+      services: [
+        'Professional facial treatments, chemical peels, and custom skincare solutions for radiant, healthy skin.'
+      ]
+    },
+    {
+      title: "Nail Artistry",
+      price: '1999',
+      duration: '60 mins',
+      icon: GiLeatherBoot,
+      services: [
+        'Luxury manicure and pedicure services featuring premium products and artistic nail designs.'
+      ]
     }
   ];
 
+  const pageCount = Math.ceil(priceData.length / itemsPerPage);
+  const currentItems = priceData.slice(
+    currentPage * itemsPerPage,
+    (currentPage + 1) * itemsPerPage
+  );
+
   return (
-    <div className="pt-32 min-h-screen bg-[#0d0f15] relative overflow-hidden"> {/* Changed pt-20 to pt-32 */}
+    <div className="bg-[#0d0f15] relative h-screen">
       <div className="absolute inset-0 bg-gradient-to-b from-[#D4B86A]/5 to-transparent opacity-60" />
-      <div className="container mx-auto px-4 py-20 relative max-w-[100vw]"> {/* Changed py-16 to py-20 */}
-        <div className="text-center mb-16">
-          <h2 className="text-5xl md:text-6xl font-extrabold text-[#D4B86A] mb-4">
+      <div className="container mx-auto px-4 py-4 relative h-full flex flex-col">
+        <div className="text-center mb-4">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#D4B86A] mb-1">
             Premium Services
           </h2>
-          <p className="text-xl text-gray-400 max-w-2xl mx-auto">
+          <p className="text-xs md:text-sm text-gray-400 max-w-2xl mx-auto">
             Discover our extensive range of luxury salon services
           </p>
         </div>
-        <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
-          {priceData.map((item, index) => (
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 flex-1">
+          {currentItems.map((item, index) => (
             <PriceCard key={index} {...item} />
+          ))}
+        </div>
+        <div className="flex justify-center gap-2 py-3">
+          {[...Array(pageCount)].map((_, i) => (
+            <button
+              key={i}
+              onClick={() => setCurrentPage(i)}
+              className={`w-2 h-2 rounded-full ${
+                currentPage === i ? 'bg-[#D4B86A]' : 'bg-gray-600'
+              }`}
+            />
           ))}
         </div>
       </div>

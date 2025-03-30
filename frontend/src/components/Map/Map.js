@@ -14,6 +14,9 @@ const Map = () => {
   // Add state for OAuth token
   const [oauthToken, setOauthToken] = useState(null);
 
+  // Add state to track if the side panel is visible on mobile
+  const [mobilePanelVisible, setMobilePanelVisible] = useState(true);
+
   useEffect(() => {
     let mounted = true;
 
@@ -164,6 +167,62 @@ const Map = () => {
     };
   }, [oauthToken]);
 
+  // Add useEffect for the hamburger menu functionality
+  useEffect(() => {
+    const addHamburgerMenu = () => {
+      // Create hamburger menu button for mobile view
+      const container = document.querySelector('.container');
+      if (!container) return;
+      
+      // Check if a hamburger already exists
+      if (document.querySelector('.hamburger-menu')) return;
+      
+      const hamburger = document.createElement('button');
+      hamburger.className = 'hamburger-menu';
+      hamburger.setAttribute('aria-label', 'Toggle shop list');
+      hamburger.innerHTML = `
+        <span></span>
+        <span></span>
+        <span></span>
+      `;
+      
+      container.appendChild(hamburger);
+      
+      // Add click handler
+      hamburger.addEventListener('click', () => {
+        const nearbySearch = document.getElementById('nearby_search');
+        if (nearbySearch) {
+          // Toggle the visibility
+          if (nearbySearch.classList.contains('hidden')) {
+            nearbySearch.classList.remove('hidden');
+            setMobilePanelVisible(true);
+          } else {
+            nearbySearch.classList.add('hidden');
+            setMobilePanelVisible(false);
+          }
+          
+          // Update hamburger appearance
+          hamburger.classList.toggle('active');
+          
+          // Resize map to adjust to new layout
+          if (window.map) {
+            setTimeout(() => {
+              window.map.resize();
+            }, 300); // Wait for transition to complete
+          }
+        }
+      });
+    };
+    
+    // Wait a bit for the DOM to be ready
+    setTimeout(addHamburgerMenu, 1000);
+    
+    return () => {
+      const hamburger = document.querySelector('.hamburger-menu');
+      if (hamburger) hamburger.remove();
+    };
+  }, []);
+
   const SHOPS_STORAGE_KEY = 'barber_shops';
   
   function saveShopsData(shops) {
@@ -232,23 +291,33 @@ const Map = () => {
     const fullAddress = place.placeAddress || 'No address';
 
     info.innerHTML = `
-      <strong>${place.placeName || 'Unnamed Shop'}</strong><br>
-      ${fullAddress}<br>
-      Distance: ${place.distance || 'N/A'} m<br>
-      <button class="book-btn" data-shop='${encodeURIComponent(JSON.stringify({
-        shopName: place.placeName || '',
-        address: fullAddress
-      }))}'>
-        📅 Book Appointment
-      </button>
-      <button class="redirect-btn" onclick="window.open('https://www.mappls.com/${place.eLoc}', '_blank')">
-        🔗 Open in Mappls
-      </button>
+      <div class="shop-header">
+        <strong class="shop-name">${place.placeName || 'Unnamed Shop'}</strong>
+        <div class="shop-actions">
+          <button class="toggle-shop-btn" title="Expand/Collapse">▼</button>
+          <button class="close-shop-btn" title="Close">&times;</button>
+        </div>
+      </div>
+      <div class="shop-details">
+        ${fullAddress}<br>
+        Distance: ${place.distance || 'N/A'} m<br>
+        <div class="shop-buttons">
+          <button class="book-btn" data-shop='${encodeURIComponent(JSON.stringify({
+            shopName: place.placeName || '',
+            address: fullAddress
+          }))}'>
+            📅 Book Appointment
+          </button>
+          <button class="redirect-btn" onclick="window.open('https://www.mappls.com/${place.eLoc}', '_blank')">
+            🔗 Open in Mappls
+          </button>
+        </div>
+      </div>
     `;
     
     div.appendChild(info);
 
-    // Attach event listener to the Book button
+    // Attach event listeners after the element is added to the DOM
     setTimeout(() => {
       const bookBtn = info.querySelector('.book-btn');
       if (bookBtn) {
@@ -257,6 +326,34 @@ const Map = () => {
           if (!encoded) return;
           const details = JSON.parse(decodeURIComponent(encoded));
           handleBookClick(details);
+        });
+      }
+
+      // Add event listener for the close button
+      const closeBtn = info.querySelector('.close-shop-btn');
+      if (closeBtn) {
+        closeBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          div.remove(); // Remove the shop item
+        });
+      }
+
+      // Add event listener for the toggle button
+      const toggleBtn = info.querySelector('.toggle-shop-btn');
+      const shopDetails = info.querySelector('.shop-details');
+      if (toggleBtn && shopDetails) {
+        toggleBtn.addEventListener('click', (e) => {
+          e.stopPropagation();
+          
+          // Toggle visibility of details
+          const isCollapsed = shopDetails.classList.toggle('collapsed');
+          
+          // Update the toggle button icon
+          toggleBtn.textContent = isCollapsed ? '▶' : '▼';
+          toggleBtn.title = isCollapsed ? 'Expand' : 'Collapse';
+          
+          // Store the state in the button element
+          toggleBtn.setAttribute('data-collapsed', isCollapsed);
         });
       }
     }, 0);
@@ -296,7 +393,7 @@ const Map = () => {
     }
 
     try {
-      const response = await fetch('https://looksx-backend.onrender.com/api/appointments/', {
+      const response = await fetch('http://localhost:8800/api/appointments/', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
@@ -348,6 +445,237 @@ const Map = () => {
         <div id="map"></div>
         <div id="nearby_search"></div>
       </div>
+      
+      <style jsx="true">{`
+        .container {
+          display: flex;
+          position: relative;
+          height: 100vh;
+          width: 100%;
+        }
+        
+        #map {
+          flex: 1;
+          height: 100%;
+        }
+        
+        #nearby_search {
+          width: 350px;
+          height: 100%;
+          overflow-y: auto;
+          padding: 10px;
+          background-color: white;
+          box-shadow: -2px 0 5px rgba(0,0,0,0.1);
+          transition: transform 0.3s ease, opacity 0.3s ease;
+          padding-top: 60px; /* Add padding to the top to avoid navbar overlap */
+        }
+        
+        /* Nearby search heading styling - removed sticky positioning */
+        #nearby_search h3 {
+          background: white;
+          padding: 10px 0;
+          margin-top: 0;
+          margin-bottom: 15px;
+          border-bottom: 1px solid #eee;
+        }
+        
+        /* Hamburger menu styling - repositioned to bottom-right */
+        .hamburger-menu {
+          display: none;
+          position: absolute;
+          bottom: 15px;  /* Changed from top to bottom */
+          right: 15px;
+          z-index: 1000;
+          background-color: white;
+          border: none;
+          border-radius: 5px;
+          box-shadow: 0 2px 5px rgba(0,0,0,0.2);
+          width: 40px;
+          height: 40px;
+          padding: 5px;
+          cursor: pointer;
+          flex-direction: column;
+          justify-content: space-around;
+          align-items: center;
+        }
+        
+        .hamburger-menu span {
+          display: block;
+          width: 25px;
+          height: 3px;
+          background-color: #333;
+          transition: all 0.3s ease;
+        }
+        
+        .hamburger-menu.active span:nth-child(1) {
+          transform: translateY(8px) rotate(45deg);
+        }
+        
+        .hamburger-menu.active span:nth-child(2) {
+          opacity: 0;
+        }
+        
+        .hamburger-menu.active span:nth-child(3) {
+          transform: translateY(-8px) rotate(-45deg);
+        }
+
+        .shop-header {
+          display: flex;
+          justify-content: space-between;
+          align-items: center;
+          padding: 8px 0;
+          width: 100%;
+        }
+        
+        .shop-actions {
+          display: flex;
+          gap: 8px;
+        }
+        
+        .toggle-shop-btn,
+        .close-shop-btn {
+          background: none;
+          border: none;
+          font-size: 1.2rem;
+          cursor: pointer;
+          color: #666;
+          padding: 0 5px;
+          line-height: 1;
+          display: flex;
+          align-items: center;
+          justify-content: center;
+        }
+        
+        .toggle-shop-btn:hover,
+        .close-shop-btn:hover {
+          color: #000;
+        }
+        
+        .shop-details.collapsed {
+          display: none;
+        }
+        
+        .shop-item {
+          border-bottom: 1px solid #ddd;
+          margin-bottom: 10px;
+          padding-bottom: 10px;
+        }
+        
+        .shop-header {
+          border-bottom: none;
+        }
+        
+        .toggle-shop-btn {
+          display: block; /* Show toggle in all modes */
+        }
+        
+        .shop-name {
+          font-size: 1.1rem;
+          margin-right: 10px;
+          flex-grow: 1;
+        }
+        
+        @media (max-width: 768px) {
+          .container {
+            flex-direction: column;
+          }
+          
+          #map {
+            height: 100%;
+            width: 100%;
+          }
+          
+          #nearby_search {
+            position: absolute;
+            bottom: 0;
+            left: 0;
+            right: 0;
+            width: 100%;
+            height: 40%;
+            max-height: 50vh;
+            z-index: 10;
+            box-shadow: 0 -2px 5px rgba(0,0,0,0.2);
+            border-top-left-radius: 15px;
+            border-top-right-radius: 15px;
+            padding-bottom: 60px; /* Add padding to avoid content being hidden by hamburger button */
+            padding-top: 20px; /* Less padding needed on top for mobile view */
+          }
+          
+          #nearby_search.hidden {
+            transform: translateY(calc(100% - 40px));
+            opacity: 0.9;
+          }
+          
+          #nearby_search::before {
+            content: '';
+            position: absolute;
+            top: 10px;
+            left: 50%;
+            transform: translateX(-50%);
+            width: 40px;
+            height: 5px;
+            background-color: #ccc;
+            border-radius: 5px;
+          }
+          
+          .hamburger-menu {
+            display: flex;
+            bottom: 75px; /* Position it above the panel when collapsed */
+            right: 15px;
+            z-index: 1001; /* Make sure it's above the map controls */
+          }
+          
+          /* Create a semi-transparent background behind the hamburger to improve visibility */
+          .hamburger-menu::before {
+            content: '';
+            position: absolute;
+            top: -5px;
+            left: -5px;
+            right: -5px;
+            bottom: -5px;
+            background-color: rgba(255, 255, 255, 0.5);
+            border-radius: 10px;
+            z-index: -1;
+          }
+          
+          .shop-buttons {
+            display: flex;
+            flex-direction: column;
+            gap: 10px;
+            margin-top: 10px;
+          }
+          
+          .book-btn,
+          .redirect-btn {
+            width: 100%;
+            padding: 10px;
+          }
+        }
+        
+        @media (min-width: 769px) {
+          .shop-buttons {
+            display: flex;
+            gap: 10px;
+            margin-top: 10px;
+          }
+          
+          .book-btn,
+          .redirect-btn {
+            padding: 6px 12px;
+          }
+
+          /* Container adjustments for desktop */
+          .container {
+            padding-top: 60px; /* Add padding to account for fixed navbar */
+            height: calc(100vh - 60px); /* Adjust height to account for navbar */
+          }
+          
+          /* Ensure first shop is fully visible */
+          #nearby_search {
+            margin-top: 0;
+          }
+        }
+      `}</style>
       
       {showAppointmentModal && (
         <div className="appointment-modal-overlay">

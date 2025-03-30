@@ -5,6 +5,7 @@ import HeroSection from "./components/HeroSection";
 import Intro from "./components/Intro";
 import Services from "./components/Services";
 import Barber from "./components/Barber";
+import MobileBarber from "./components/MobileBarber";
 import Quote from "./components/Quote";
 import Pricing from "./components/Pricing";
 import Footer from "./components/Footer";
@@ -18,21 +19,32 @@ import BarberDashboard from './components/BarberDashboard';
 import Profile from './components/Profile';
 import { UserProvider } from './context/UserContext';
 import Map from './components/Map/Map';
+import useIsMobile from './hooks/useIsMobile';
+import MobileServices from "./components/MobileServices";
+import MobileIntro from "./components/MobileIntro";
+import MobilePricing from "./components/MobilePricing";
+import MobileHeroSection from "./components/MobileHeroSection";
+import MobileBlog from "./components/MobileBlog";
 
-const Home = () => (
-  <>
-    <HeroSection />
-    <Intro />
-    <Services />
-    <Barber />
-    <Quote />
-    <Pricing />
-  </>
-);
+const Home = () => {
+  const isMobile = useIsMobile();
+  
+  return (
+    <>
+      {isMobile ? <MobileHeroSection /> : <HeroSection />}
+      {isMobile ? <MobileIntro /> : <Intro />}
+      {isMobile ? <MobileServices /> : <Services />}
+      {isMobile ? <MobileBarber /> : <Barber />}
+      <Quote />
+      {isMobile ? <MobilePricing /> : <Pricing />}
+    </>
+  );
+};
 
 const About = () => <Intro />;
 
 function App() {
+  const isMobile = useIsMobile();
   return (
     <UserProvider>
       <Router>
@@ -42,9 +54,9 @@ function App() {
             <div className="overflow-x-hidden w-full">
               <Routes>
                 <Route path="/" element={<Home />} />
-                <Route path="/about" element={<About />} />
-                <Route path="/services" element={<Services />} />
-                <Route path="/blog" element={<Blog />} />
+                <Route path="/about" element={isMobile ? <MobileIntro /> : <Intro />} />
+                <Route path="/services" element={isMobile ? <MobileServices /> : <Services />} />
+                <Route path="/blog" element={isMobile ? <MobileBlog /> : <Blog />} />
                 <Route path="/contact" element={<Contact />} />
                 <Route path="/appointment" element={<Map />} />
                 {/* Auth routes moved to end */}

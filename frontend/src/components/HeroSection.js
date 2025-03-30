@@ -44,8 +44,8 @@ const HeroSection = () => {
   }, []);
 
   return (
-    <div className="relative h-screen"> {/* Removed pt-[76px] */}
-      <div className="h-screen relative overflow-hidden"> {/* Changed to full h-screen */}
+    <div className="relative min-h-[100svh]"> 
+      <div className="min-h-[100svh] relative overflow-hidden"> 
         {slides.map((slide, index) => (
           <div
             key={index}
@@ -63,8 +63,8 @@ const HeroSection = () => {
         ))}
         <div className="absolute inset-0 bg-gradient-to-r from-[#1A1F2C]/70 to-transparent z-10" />
         
-        <div className="absolute inset-0 flex items-center z-20 mt-[200px]"> {/* Increased mt-[76px] to mt-[120px] */}
-          <div className="container pl-20 lg:pl-32 max-w-[100vw]">
+        <div className="absolute inset-0 flex items-center z-20 mt-[15vh] sm:mt-[20vh] md:mt-[25vh]"> 
+          <div className="container px-4 sm:px-6 md:pl-20 lg:pl-32 max-w-full">
             <StyleCard
               title={slides[currentSlide].title}
               subtitle={slides[currentSlide].subtitle}

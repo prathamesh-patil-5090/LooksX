@@ -24,7 +24,7 @@ const Register = () => {
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
-      const response = await axios.post('https://looksx-backend.onrender.com/api/auth/register', formData);
+      const response = await axios.post('http://localhost:8800/api/auth/register', formData);
       
       // Use context login instead of localStorage
       login(response.data, response.data.token);

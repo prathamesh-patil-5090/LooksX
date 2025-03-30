@@ -59,7 +59,7 @@ const RegisterShop = () => {
     try {
       const token = localStorage.getItem('token');
       const response = await axios.post(
-        'https://looksx-backend.onrender.com/api/barber/shops',
+        'http://localhost:8800/api/barber/shops',
         formData,
         {
           headers: {

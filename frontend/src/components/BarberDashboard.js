@@ -35,7 +35,7 @@ const BarberDashboard = () => {
       try {
         setUserInfo(user);
         const response = await axios.get(
-          'https://looksx-backend.onrender.com/api/barber/appointments',
+          'http://localhost:8800/api/barber/appointments',
           {
             headers: { Authorization: `Bearer ${token}` }
           }
@@ -74,7 +74,7 @@ const BarberDashboard = () => {
       // Use the new unified endpoint
       const response = await axios({
         method: 'PATCH',
-        url: `https://looksx-backend.onrender.com/api/appointments/${appointmentId}/status`,
+        url: `http://localhost:8800/api/appointments/${appointmentId}/status`,
         data: { status: newStatus },
         headers: {
           'Authorization': `Bearer ${token}`,
@@ -86,7 +86,7 @@ const BarberDashboard = () => {
 
       // Refresh appointments after successful update
       const updatedAppointments = await axios.get(
-        'https://looksx-backend.onrender.com/api/barber/appointments',
+        'http://localhost:8800/api/barber/appointments',
         {
           headers: { 'Authorization': `Bearer ${token}` }
         }
