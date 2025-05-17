@@ -1,6 +1,8 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+// Remove direct import of axios
 import { useUser } from '../context/UserContext';
+import { fetchBarberAppointments } from '../services/barberService'; // Import from barberService
+import { updateAppointmentStatus } from '../services/appointmentService'; // Import from appointmentService
 
 const formatDateTime = (dateString) => {
   const date = new Date(dateString);
@@ -21,7 +23,7 @@ const formatDateTime = (dateString) => {
 };
 
 const BarberDashboard = () => {
-  const { user, token } = useUser();
+  const { user, token: contextToken } = useUser(); // Renamed token to contextToken to avoid conflict
   const [appointments, setAppointments] = useState([]);
   const [userInfo, setUserInfo] = useState(null);
   const [loading, setLoading] = useState(true);
@@ -32,35 +34,42 @@ const BarberDashboard = () => {
 
   useEffect(() => {
     const fetchData = async () => {
+      if (!contextToken) { // Use contextToken
+        setError('Authentication token not found.');
+        setLoading(false);
+        return;
+      }
       try {
         setUserInfo(user);
-        const response = await axios.get(
-          'http://localhost:8800/api/barber/appointments',
-          {
-            headers: { Authorization: `Bearer ${token}` }
-          }
-        );
-        setAppointments(response.data);
+        const appointmentsData = await fetchBarberAppointments(contextToken); // Use service
+        setAppointments(appointmentsData);
         setLoading(false);
       } catch (err) {
-        setError(err.response?.data?.message || 'Failed to fetch appointments');
+        setError(err.message || 'Failed to fetch appointments');
         setLoading(false);
       }
     };
 
-    fetchData();
-  }, [user, token]);
+    if (user && contextToken) { // Ensure user and token are available
+        fetchData();
+    }
+  }, [user, contextToken]); // Depend on contextToken
 
   const handleStatusUpdate = async (appointmentId, newStatus) => {
     setUpdateLoading(true);
     setUpdateError('');
     setSuccessMessage('');
     
-    try {
-      const token = localStorage.getItem('token');
-      const user = JSON.parse(localStorage.getItem('user'));
+    const currentToken = localStorage.getItem('token'); // Or use contextToken if consistently available and preferred
 
-      // Verify if user is a barber and has a shop
+    if (!currentToken) {
+        setUpdateError('Authentication token not found. Please log in again.');
+        setUpdateLoading(false);
+        return;
+    }
+
+    try {
+      // The user object from context should be up-to-date
       if (!user || user.role !== 'barber' || !user.shopName) {
         throw new Error('Unauthorized - Must be a barber with a registered shop');
       }
@@ -71,28 +80,13 @@ const BarberDashboard = () => {
         newStatus
       });
 
-      // Use the new unified endpoint
-      const response = await axios({
-        method: 'PATCH',
-        url: `http://localhost:8800/api/appointments/${appointmentId}/status`,
-        data: { status: newStatus },
-        headers: {
-          'Authorization': `Bearer ${token}`,
-          'Content-Type': 'application/json'
-        }
-      });
+      await updateAppointmentStatus(appointmentId, newStatus, currentToken); // Use service
 
-      console.log('PATCH response:', response.data); // Debug log
+      console.log('PATCH successful'); // Debug log
 
       // Refresh appointments after successful update
-      const updatedAppointments = await axios.get(
-        'http://localhost:8800/api/barber/appointments',
-        {
-          headers: { 'Authorization': `Bearer ${token}` }
-        }
-      );
-
-      setAppointments(updatedAppointments.data);
+      const updatedAppointmentsData = await fetchBarberAppointments(currentToken); // Use service
+      setAppointments(updatedAppointmentsData);
       setSuccessMessage(`Appointment ${newStatus} successfully!`);
       setTimeout(() => setSuccessMessage(''), 3000);
     } catch (err) {

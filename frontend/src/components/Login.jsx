@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+// Remove direct import of axios
 import { useNavigate, Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
+import { loginUser } from '../services/authService'; // Import the new service function
 
 const Login = () => {
   const { login } = useUser();
@@ -21,20 +22,24 @@ const Login = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(''); // Clear previous errors
     try {
-      const response = await axios.post('http://localhost:8800/api/auth/login', formData);
+      // Call the service function
+      const responseData = await loginUser(formData);
       
       // Use context login instead of localStorage
-      login(response.data, response.data.token);
+      login(responseData, responseData.token);
       
       // Redirect based on user role
-      if (response.data.role === 'barber') {
+      if (responseData.role === 'barber') {
         navigate('/barber-dashboard');
       } else {
         navigate('/');
       }
     } catch (err) {
-      setError(err.response?.data?.message || 'Login failed');
+      // Display more specific error from backend if available
+      // The error (err) should now be the object thrown by authService (e.g., err.message)
+      setError(err.message || 'Login failed');
     }
   };
 

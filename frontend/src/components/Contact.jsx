@@ -1,10 +1,11 @@
-import React, { useState, useRef } from 'react'; // Added useRef
-import emailjs from 'emailjs-com'; // Import emailjs
+import React, { useState, useRef } from 'react';
+// Remove direct import of emailjs
 import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock } from 'react-icons/fa';
 import contactBg from '../assets/img/contact.avif';
+import { sendContactFormEmail } from '../services/emailService'; // Import the new service
 
 const Contact = () => {
-  const form = useRef(); // Create a ref for the form
+  const form = useRef(); // This ref is no longer strictly needed by emailjs.send but can be kept for general form handling if desired
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -18,46 +19,21 @@ const Contact = () => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
   };
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => { // Make handleSubmit async
     e.preventDefault();
     setIsSubmitting(true);
     setSubmitStatus({ success: false, message: '' });
 
-    const serviceID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
-    const templateID_OWNER = import.meta.env.VITE_EMAILJS_TEMPLATE_ID_OWNER;
-    const templateID_USER = import.meta.env.VITE_EMAILJS_TEMPLATE_ID_USER;
-    const userID = import.meta.env.VITE_EMAILJS_USER_ID;
-
-    if (!serviceID || !templateID_OWNER || !templateID_USER || !userID) {
-      setSubmitStatus({ success: false, message: 'Configuration error. Could not send email.' });
+    try {
+      await sendContactFormEmail(formData);
+      setSubmitStatus({ success: true, message: 'Message sent successfully!' });
+      setFormData({ name: '', email: '', subject: '', message: '' }); // Reset form
+    } catch (error) {
+      console.error('Error sending contact form:', error);
+      setSubmitStatus({ success: false, message: error.message || 'Failed to send message. Please try again.' });
+    } finally {
       setIsSubmitting(false);
-      return;
     }
-
-    // 1. Send email to yourself (owner)
-    const ownerParams = {
-      ...formData,
-      to_email: "prathampatil7798@gmail.com"
-    };
-    emailjs.send(serviceID, templateID_OWNER, ownerParams, userID)
-      .then(() => {
-        // 2. Send auto-reply to user
-        const userParams = {
-          ...formData,
-          to_email: formData.email
-        };
-        return emailjs.send(serviceID, templateID_USER, userParams, userID);
-      })
-      .then(() => {
-        setSubmitStatus({ success: true, message: 'Message sent successfully!' });
-        setFormData({ name: '', email: '', subject: '', message: '' });
-      })
-      .catch((error) => {
-        setSubmitStatus({ success: false, message: `Failed to send message: ${error.text || error}. Please try again.` });
-      })
-      .finally(() => {
-        setIsSubmitting(false);
-      });
 
     // No redirect, no reload, just show status
     return false;

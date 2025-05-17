@@ -18,7 +18,7 @@ mongoose.connect(process.env.MONGO_URL)
 
 // CORS configuration
 app.use(cors({
-  origin: 'http://localhost:3000', // React app's URL - removed trailing slash
+  origin: process.env.CONNECTION_URL, // React app's URL - removed trailing slash
   credentials: true,
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization']

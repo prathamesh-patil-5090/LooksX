@@ -10,7 +10,7 @@ const app = express();
 
 // Enhanced CORS configuration
 const corsOptions = {
-  origin: 'http://localhost:3000', // Removed trailing slash
+  origin: process.env.CONNECTION_URL, // Use CONNECTION_URL from .env
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,

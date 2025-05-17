@@ -1,7 +1,8 @@
 import React, { useState } from 'react';
-import axios from 'axios';
+// Remove direct import of axios
 import { useNavigate, Link } from 'react-router-dom';
 import { useUser } from '../context/UserContext';
+import { registerUser } from '../services/authService'; // Import the new service
 
 const Register = () => {
   const { login } = useUser();
@@ -25,10 +26,11 @@ const Register = () => {
     e.preventDefault();
     setError(''); // Clear previous errors
     try {
-      const response = await axios.post('http://localhost:8800/api/auth/register', formData);
+      // Call the service function
+      const responseData = await registerUser(formData);
       
       // Use context login instead of localStorage
-      login(response.data, response.data.token);
+      login(responseData, responseData.token);
 
       // If user is a barber, redirect to shop registration
       if (formData.role === 'barber') {
@@ -38,8 +40,9 @@ const Register = () => {
       }
     } catch (err) {
       // Display more specific error from backend if available
-      const specificError = err.response?.data?.error;
-      const generalMessage = err.response?.data?.message;
+      // The error (err) should now be the object thrown by authService (e.g., err.error or err.message)
+      const specificError = err.error;
+      const generalMessage = err.message;
       setError(specificError || generalMessage || 'Registration failed');
     }
   };

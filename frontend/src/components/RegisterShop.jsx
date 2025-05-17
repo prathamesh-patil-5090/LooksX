@@ -1,6 +1,6 @@
 import React, { useState } from 'react';
-import axios from 'axios';
 import { useNavigate } from 'react-router-dom';
+import { registerShop } from '../services/barberService'; // Import the new service
 
 const RegisterShop = () => {
   // Define default compulsory services with Indian Rupee prices
@@ -76,23 +76,28 @@ const RegisterShop = () => {
 
   const handleSubmit = async (e) => {
     e.preventDefault();
+    setError(''); // Clear previous errors
     try {
       const token = localStorage.getItem('token');
-      const response = await axios.post(
-        'http://localhost:8800/api/barber/shops',
-        formData,
-        {
-          headers: {
-            Authorization: `Bearer ${token}`
-          }
-        }
-      );
+      if (!token) {
+        setError('Authentication token not found. Please log in again.');
+        // Optionally, redirect to login: navigate('/login');
+        return;
+      }
+      
+      // Call the service function
+      const responseData = await registerShop(formData, token);
       
       // Update local storage with new user data including shop info
-      localStorage.setItem('user', JSON.stringify(response.data.user));
+      // Assuming responseData.user contains the updated user object
+      if (responseData.user) {
+        localStorage.setItem('user', JSON.stringify(responseData.user));
+      }
       navigate('/barber-dashboard');
     } catch (err) {
-      setError(err.response?.data?.message || 'Shop registration failed');
+      // Display more specific error from backend if available
+      // The error (err) should now be the object thrown by barberService (e.g., err.message)
+      setError(err.message || 'Shop registration failed');
     }
   };
 

@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import axios from 'axios';
+import { fetchUserAppointments } from '../services/appointmentService'; // Import the new service
 
 const formatDateTime = (dateString) => {
   const date = new Date(dateString);
@@ -32,17 +32,18 @@ const CustomerDashboard = () => {
         const user = JSON.parse(localStorage.getItem('user'));
         setUserInfo(user);
 
-        // Updated to use the new endpoint and correct port
-        const response = await axios.get(
-          'http://localhost:8800/api/appointments', // Changed port from 5000 to 8800
-          {
-            headers: { Authorization: `Bearer ${token}` }
-          }
-        );
-        setAppointments(response.data);
+        if (!token) {
+          setError('Authentication token not found. Please log in.');
+          setLoading(false);
+          return;
+        }
+
+        // Call the service function
+        const appointmentsData = await fetchUserAppointments(token);
+        setAppointments(appointmentsData);
         setLoading(false);
       } catch (err) {
-        setError(err.response?.data?.message || 'Failed to fetch appointments');
+        setError(err.message || 'Failed to fetch appointments');
         setLoading(false);
       }
     };
