@@ -20,6 +20,11 @@ router.post('/register', async (req, res) => {
     const user = await newUser.save();
     const { password, ...others } = user._doc;
     
+    if (!process.env.JWT_SECRET) {
+      console.error("FATAL ERROR: JWT_SECRET is not defined in .env file.");
+      // It's better to throw an error here or handle it gracefully
+      // For now, logging and letting jwt.sign fail (which it will)
+    }
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
     res.status(200).json({ 
       ...others, 
@@ -29,6 +34,7 @@ router.post('/register', async (req, res) => {
         "User registered successfully"
     });
   } catch (err) {
+    console.error("REGISTRATION ROUTE ERROR:", err); // Enhanced server-side logging
     res.status(500).json({
       error: err.message,
       message: "Registration failed"
@@ -48,8 +54,9 @@ router.post('/login', async (req, res) => {
     const token = jwt.sign({ id: user._id }, process.env.JWT_SECRET);
     const { password, ...others } = user._doc;
 
-    res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
-    res.header('Access-Control-Allow-Credentials', 'true');
+    // These headers should be handled by the global CORS middleware
+    // res.header('Access-Control-Allow-Origin', 'http://localhost:3000');
+    // res.header('Access-Control-Allow-Credentials', 'true');
     res.status(200).json({ ...others, token });
   } catch (err) {
     res.status(500).json(err);

@@ -1,36 +1,48 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { GiScissors, GiBeard, GiRazor, GiFaceToFace } from 'react-icons/gi';
 import { Swiper, SwiperSlide } from 'swiper/react';
 import { Autoplay } from 'swiper/modules';
 import 'swiper/css';
 import 'swiper/css/pagination';
 
-const ServiceCard = ({ title, description, icon: Icon, includes }) => (
-  <div className="relative p-6 bg-black/30 backdrop-blur-sm rounded-xl border border-gray-800 h-[578px] flex items-center">
-    <div className="absolute inset-0 bg-gradient-to-br from-[#D4B86A]/10 to-[#B89B5D]/10"></div>
-    <div className="relative z-10 flex flex-col items-center text-center w-full">
-      <div className="w-20 h-20 bg-gradient-to-br from-[#D4B86A] to-[#B89B5D] rounded-lg flex items-center justify-center mb-6">
-        <Icon className="text-3xl text-black" />
-      </div>
-      <h3 className="text-3xl font-bold text-[#D4B86A] mb-4">{title}</h3>
-      <p className="text-gray-300 text-base px-4 mb-8">{description}</p>
-      
-      <div className="border-t border-[#D4B86A]/30 w-24 my-6"></div>
-      
-      <div className="bg-black/20 p-4 rounded-lg w-full max-w-xs">
-        <h4 className="text-[#D4B86A] text-lg mb-2">Includes:</h4>
-        <ul className="text-gray-300 text-sm text-left pl-4 space-y-2">
-          {includes.map((item, index) => (
-            <li key={index} className="flex items-start">
-              <span className="text-[#D4B86A] mr-2">•</span>
-              <span>{item}</span>
-            </li>
-          ))}
-        </ul>
+const ServiceCard = ({ title, description, icon: Icon, includes }) => {
+  const navigate = useNavigate();
+  
+  return (
+    <div className="relative p-6 bg-black/30 backdrop-blur-sm rounded-xl border border-gray-800 h-[578px] flex items-center">
+      <div className="absolute inset-0 bg-gradient-to-br from-[#D4B86A]/10 to-[#B89B5D]/10"></div>
+      <div className="relative z-10 flex flex-col items-center text-center w-full">
+        <div className="w-20 h-20 bg-gradient-to-br from-[#D4B86A] to-[#B89B5D] rounded-lg flex items-center justify-center mb-6">
+          <Icon className="text-3xl text-black" />
+        </div>
+        <h3 className="text-3xl font-bold text-[#D4B86A] mb-4">{title}</h3>
+        <p className="text-gray-300 text-base px-4 mb-8">{description}</p>
+        
+        <div className="border-t border-[#D4B86A]/30 w-24 my-6"></div>
+        
+        <div className="bg-black/20 p-4 rounded-lg w-full max-w-xs">
+          <h4 className="text-[#D4B86A] text-lg mb-2">Includes:</h4>
+          <ul className="text-gray-300 text-sm text-left pl-4 space-y-2">
+            {includes.map((item, index) => (
+              <li key={index} className="flex items-start">
+                <span className="text-[#D4B86A] mr-2">•</span>
+                <span>{item}</span>
+              </li>
+            ))}
+          </ul>
+        </div>
+        
+        <button 
+          onClick={() => navigate('/appointment')}
+          className="mt-6 bg-gradient-to-r from-[#D4B86A] to-[#B89B5D] text-black py-2 px-6 rounded-md font-medium hover:opacity-90 transition-opacity"
+        >
+          Book Now
+        </button>
       </div>
     </div>
-  </div>
-);
+  );
+};
 
 const MobileServices = () => {
   const services = [

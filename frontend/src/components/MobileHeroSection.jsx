@@ -1,4 +1,5 @@
 import React, { useState, useEffect } from 'react';
+import { useNavigate } from 'react-router-dom';
 import about1 from "../assets/img/about-1.jpg";
 import about2 from "../assets/img/about-2.jpg";
 import about3 from "../assets/img/about-3.jpg";
@@ -28,17 +29,24 @@ const slides = [
   }
 ];
 
-const MobileStyleCard = ({ title, subtitle, description, isTransitioning }) => (
-  <div className={`transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
-    <h2 className="text-white text-3xl font-bold mb-1">{title}</h2>
-    <h3 className="text-[#D4B86A] text-4xl font-extrabold mb-3">{subtitle}</h3>
-    <p className="text-gray-300 text-sm mb-6 max-w-[280px]">{description}</p>
-    <button className="flex items-center gap-2 bg-gradient-to-r from-[#D4B86A] to-[#B89B5D] text-black py-2 px-6 rounded-md font-medium hover:opacity-90 transition-opacity">
-      Book Now
-      <IoChevronForward className="text-lg" />
-    </button>
-  </div>
-);
+const MobileStyleCard = ({ title, subtitle, description, isTransitioning }) => {
+  const navigate = useNavigate();
+  
+  return (
+    <div className={`transition-opacity duration-500 ${isTransitioning ? 'opacity-0' : 'opacity-100'}`}>
+      <h2 className="text-white text-3xl font-bold mb-1">{title}</h2>
+      <h3 className="text-[#D4B86A] text-4xl font-extrabold mb-3">{subtitle}</h3>
+      <p className="text-gray-300 text-sm mb-6 max-w-[280px]">{description}</p>
+      <button 
+        onClick={() => navigate('/appointment')}
+        className="flex items-center gap-2 bg-gradient-to-r from-[#D4B86A] to-[#B89B5D] text-black py-2 px-6 rounded-md font-medium hover:opacity-90 transition-opacity"
+      >
+        Book Now
+        <IoChevronForward className="text-lg" />
+      </button>
+    </div>
+  );
+};
 
 const MobileHeroSection = () => {
   const [currentSlide, setCurrentSlide] = useState(0);

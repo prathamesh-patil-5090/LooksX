@@ -1,14 +1,18 @@
-import React, { useState } from 'react';
+import React, { useState, useRef } from 'react'; // Added useRef
+import emailjs from 'emailjs-com'; // Import emailjs
 import { FaPhone, FaEnvelope, FaMapMarkerAlt, FaClock } from 'react-icons/fa';
-import contactBg from '../assets/img/contact.avif';  // Fix: changed from assets to assets
+import contactBg from '../assets/img/contact.avif';
 
 const Contact = () => {
+  const form = useRef(); // Create a ref for the form
   const [formData, setFormData] = useState({
     name: '',
     email: '',
     subject: '',
     message: ''
   });
+  const [isSubmitting, setIsSubmitting] = useState(false);
+  const [submitStatus, setSubmitStatus] = useState({ success: false, message: '' });
 
   const handleChange = (e) => {
     setFormData({ ...formData, [e.target.name]: e.target.value });
@@ -16,7 +20,47 @@ const Contact = () => {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    // ...existing form logic...
+    setIsSubmitting(true);
+    setSubmitStatus({ success: false, message: '' });
+
+    const serviceID = import.meta.env.VITE_EMAILJS_SERVICE_ID;
+    const templateID_OWNER = import.meta.env.VITE_EMAILJS_TEMPLATE_ID_OWNER;
+    const templateID_USER = import.meta.env.VITE_EMAILJS_TEMPLATE_ID_USER;
+    const userID = import.meta.env.VITE_EMAILJS_USER_ID;
+
+    if (!serviceID || !templateID_OWNER || !templateID_USER || !userID) {
+      setSubmitStatus({ success: false, message: 'Configuration error. Could not send email.' });
+      setIsSubmitting(false);
+      return;
+    }
+
+    // 1. Send email to yourself (owner)
+    const ownerParams = {
+      ...formData,
+      to_email: "prathampatil7798@gmail.com"
+    };
+    emailjs.send(serviceID, templateID_OWNER, ownerParams, userID)
+      .then(() => {
+        // 2. Send auto-reply to user
+        const userParams = {
+          ...formData,
+          to_email: formData.email
+        };
+        return emailjs.send(serviceID, templateID_USER, userParams, userID);
+      })
+      .then(() => {
+        setSubmitStatus({ success: true, message: 'Message sent successfully!' });
+        setFormData({ name: '', email: '', subject: '', message: '' });
+      })
+      .catch((error) => {
+        setSubmitStatus({ success: false, message: `Failed to send message: ${error.text || error}. Please try again.` });
+      })
+      .finally(() => {
+        setIsSubmitting(false);
+      });
+
+    // No redirect, no reload, just show status
+    return false;
   };
 
   const contactInfo = [
@@ -52,7 +96,7 @@ const Contact = () => {
           {/* Contact Form */}
           <div className="lg:col-span-2 bg-white/5 p-2 sm:p-6 rounded-lg backdrop-blur-sm border border-gray-800">
             <h2 className="text-base sm:text-2xl font-bold text-[#D4B86A] mb-1.5 sm:mb-6">Send us a Message</h2>
-            <form onSubmit={handleSubmit} className="space-y-1.5 sm:space-y-5">
+            <form ref={form} onSubmit={handleSubmit} className="space-y-1.5 sm:space-y-5"> {/* Add ref={form} */}
               <div className="grid grid-cols-1 md:grid-cols-2 gap-1.5 sm:gap-6">
                 <input
                   type="text"
@@ -95,14 +139,20 @@ const Contact = () => {
                            focus:border-[#D4B86A] text-gray-300 placeholder-gray-400 text-xs sm:text-base"
                 required
               />
-              <div className="flex justify-center sm:justify-start">
+              <div className="flex justify-center sm:justify-start items-center">
                 <button
                   type="submit"
                   className="px-4 sm:px-8 py-1 sm:py-3 bg-[#D4B86A] text-[#1A1F2C] font-semibold rounded hover:bg-[#D4B86A]/90
-                           transition-colors duration-300 text-xs sm:text-base"
+                           transition-colors duration-300 text-xs sm:text-base disabled:opacity-50"
+                  disabled={isSubmitting}
                 >
-                  Send Message
+                  {isSubmitting ? 'Sending...' : 'Send Message'}
                 </button>
+                {submitStatus.message && (
+                  <p className={`ml-4 text-xs sm:text-sm ${submitStatus.success ? 'text-green-400' : 'text-red-400'}`}>
+                    {submitStatus.message}
+                  </p>
+                )}
               </div>
             </form>
           </div>

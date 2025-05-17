@@ -43,8 +43,8 @@ const MobileBlog = () => {
       date: "January 15, 2024",
       image: "https://images.unsplash.com/photo-1517832207067-4db24a2ae47c",
       rating: 5,
-      content: "LooksX has completely transformed my grooming routine. The attention to detail and professional service is unmatched. Their barbers are true artists who understand modern men's styling needs.",
-      tags: ["Haircut", "Grooming", "Premium Service"]
+      content: "I've never experienced such attention to detail in a haircut. The hot towel treatment was incredibly relaxing, and Alex took the time to understand exactly what style I wanted. The scalp massage was an unexpected bonus. My hair has never looked better, and the beard trimming was absolutely precise.",
+      tags: ["Premium Service", "Hot Towel", "Beard Grooming"]
     },
     {
       id: 2,
@@ -53,8 +53,8 @@ const MobileBlog = () => {
       date: "January 12, 2024",
       image: "https://images.unsplash.com/photo-1503951914875-452162b0f3f1",
       rating: 5,
-      content: "The ambiance at LooksX is sophisticated yet welcoming. Their commitment to excellence shows in every aspect, from the initial consultation to the final styling.",
-      tags: ["Premium", "Atmosphere", "Service"]
+      content: "From the moment I walked in, I knew this wasn't your average salon. The ambient lighting, comfortable chairs, and professional staff made me feel like royalty. Mike's expertise in modern styling techniques is evident. The complimentary beverages and styling tips were great touches.",
+      tags: ["Luxury Experience", "Expert Styling", "Modern Techniques"]
     },
     {
       id: 3,

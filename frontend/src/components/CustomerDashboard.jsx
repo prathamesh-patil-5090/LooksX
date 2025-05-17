@@ -32,9 +32,9 @@ const CustomerDashboard = () => {
         const user = JSON.parse(localStorage.getItem('user'));
         setUserInfo(user);
 
-        // Updated to use the new endpoint
+        // Updated to use the new endpoint and correct port
         const response = await axios.get(
-          'http://localhost:8800/api/appointments',
+          'http://localhost:8800/api/appointments', // Changed port from 5000 to 8800
           {
             headers: { Authorization: `Bearer ${token}` }
           }
@@ -73,19 +73,19 @@ const CustomerDashboard = () => {
 
   return (
     <div className="flex items-center justify-center min-h-screen bg-gradient-to-r from-[#1A1F2C] to-[#2C3345]">
-      <div className="w-full max-w-6xl mx-auto px-4 py-8 md:py-16"> {/* Adjusted padding for mobile */}
-        <div className="space-y-4 md:space-y-8 transform transition-transform duration-300 md:hover:scale-105"> {/* Reduced spacing on mobile, hover effect only on desktop */}
+      <div className="w-full max-w-6xl mx-auto px-4 py-8 md:py-16">
+        <div className="space-y-4 md:space-y-8 transform transition-transform duration-300 md:hover:scale-105">
           {/* User Info Section */}
-          <div className="bg-white/10 backdrop-blur-md rounded-xl p-5 md:p-8 mt-4 md:mt-12"> {/* Adjusted padding and margin for mobile */}
-            <h2 className="text-2xl md:text-3xl font-bold text-white mb-2 md:mb-4 text-center">Welcome, {userInfo?.username}</h2>
-            <p className="text-gray-300 text-center text-base md:text-lg">Email: {userInfo?.email}</p>
+          <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 md:p-8 mt-4 md:mt-12">
+            <h2 className="text-xl md:text-3xl font-bold text-white mb-2 md:mb-4 text-center">Welcome, {userInfo?.username}</h2>
+            <p className="text-gray-300 text-center text-sm md:text-lg">Email: {userInfo?.email}</p>
           </div>
 
           {/* Appointments Section */}
           <div className="bg-white/10 backdrop-blur-md rounded-xl p-4 md:p-6">
-            <h3 className="text-lg md:text-xl font-bold text-white mb-4 md:mb-6">Your Appointments</h3>
+            <h3 className="text-lg md:text-xl font-bold text-white mb-3 md:mb-6">Your Appointments</h3>
             {appointments.length === 0 ? (
-              <p className="text-gray-300">No appointments found.</p>
+              <p className="text-gray-300 text-sm md:text-base">No appointments found.</p>
             ) : (
               <div className="grid gap-3 md:gap-4">
                 {appointments.map((apt) => {
@@ -95,12 +95,12 @@ const CustomerDashboard = () => {
                       <div className="flex flex-col md:flex-row md:justify-between md:items-start">
                         <div className="mb-2 md:mb-0">
                           <h4 className="text-white font-semibold text-base md:text-lg">{apt.shopName}</h4>
-                          <p className="text-gray-300 text-sm md:text-base">Service: {apt.service}</p>
-                          <p className="text-gray-300 text-sm md:text-base">Date: {datetime.date}</p>
-                          <p className="text-gray-300 text-sm md:text-base">Time: {datetime.time}</p>
-                          <p className="text-gray-300 text-sm md:text-base">Address: {apt.address}</p>
+                          <p className="text-gray-300 text-xs md:text-sm">Service: {apt.service}</p>
+                          <p className="text-gray-300 text-xs md:text-sm">Date: {datetime.date}</p>
+                          <p className="text-gray-300 text-xs md:text-sm">Time: {datetime.time}</p>
+                          <p className="text-gray-300 text-xs md:text-sm">Address: {apt.address}</p>
                         </div>
-                        <span className={`${getStatusColor(apt.status)} px-3 py-1 rounded-full text-white text-sm self-start md:self-auto mt-2 md:mt-0`}>
+                        <span className={`${getStatusColor(apt.status)} px-2 py-1 md:px-3 md:py-1 rounded-full text-white text-xs self-start md:self-auto mt-1 md:mt-0`}>
                           {apt.status || 'pending'}
                         </span>
                       </div>

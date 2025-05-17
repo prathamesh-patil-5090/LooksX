@@ -1,22 +1,34 @@
 import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import { GiScissors, GiBeard, GiRazor, GiFaceToFace } from 'react-icons/gi';
 
-const ServiceCard = ({ title, description, icon: Icon }) => (
-  <div className="group relative p-8 bg-black/30 backdrop-blur-sm rounded-2xl border border-gray-800 overflow-hidden transition-all duration-300 hover:border-[#D4B86A]/50 h-[470px]">
-    <div className="absolute inset-0 bg-gradient-to-br from-[#D4B86A]/10 to-[#B89B5D]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
-    <div className="relative z-10">
-      <div className="w-14 h-14 bg-gradient-to-br from-[#D4B86A] to-[#B89B5D] rounded-lg flex items-center justify-center mb-6 transform group-hover:scale-110 transition-transform duration-300">
-        <Icon className="text-2xl text-black" />
+const ServiceCard = ({ title, description, icon: Icon }) => {
+  const navigate = useNavigate();
+  
+  return (
+    <div className="group relative p-8 bg-black/30 backdrop-blur-sm rounded-2xl border border-gray-800 overflow-hidden transition-all duration-300 hover:border-[#D4B86A]/50 h-[470px] flex flex-col">
+      <div className="absolute inset-0 bg-gradient-to-br from-[#D4B86A]/10 to-[#B89B5D]/10 opacity-0 group-hover:opacity-100 transition-opacity duration-300"></div>
+      <div className="relative z-10 flex-1">
+        <div className="w-14 h-14 bg-gradient-to-br from-[#D4B86A] to-[#B89B5D] rounded-lg flex items-center justify-center mb-6 transform group-hover:scale-110 transition-transform duration-300">
+          <Icon className="text-2xl text-black" />
+        </div>
+        <h3 className="text-2xl font-bold text-[#D4B86A] mb-4">
+          {title}
+        </h3>
+        <p className="text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
+          {description}
+        </p>
       </div>
-      <h3 className="text-2xl font-bold text-[#D4B86A] mb-4">
-        {title}
-      </h3>
-      <p className="text-gray-400 leading-relaxed group-hover:text-gray-300 transition-colors duration-300">
-        {description}
-      </p>
+      
+      <button 
+        onClick={() => navigate('/appointment')}
+        className="mt-auto relative z-10 bg-gradient-to-r from-[#D4B86A] to-[#B89B5D] text-black py-2 px-6 rounded-md font-medium hover:opacity-90 transition-opacity"
+      >
+        Book Now
+      </button>
     </div>
-  </div>
-);
+  );
+};
 
 const Services = () => {
   const services = [

@@ -1,17 +1,11 @@
 /** @type {import('tailwindcss').Config} */
-module.exports = {
+export default {
   content: [
-    "./src/**/*.{js,jsx,ts,tsx}", // Ensure Tailwind scans all files in the `src` folder.
+    "./index.html",
+    "./src/**/*.{js,ts,jsx,tsx}", // Include .js, .ts, .jsx, .tsx within src
   ],
   theme: {
-    extend: {
-      colors: {
-        brown: {
-          500: "#A67C52",
-          600: "#8B5E34",
-        },
-      },
-    },
+    extend: {},
   },
   plugins: [],
-};
+}

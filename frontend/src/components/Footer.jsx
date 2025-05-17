@@ -5,12 +5,16 @@ import { FaFacebookF, FaTwitter, FaInstagram, FaYoutube, FaChevronDown, FaChevro
 const Footer = () => {
   const [email, setEmail] = useState('');
   const [isMobile, setIsMobile] = useState(window.innerWidth < 768);
+  const [isDesktop, setIsDesktop] = useState(window.innerWidth >= 768);
   const [expandedSection, setExpandedSection] = useState(null);
 
   useEffect(() => {
     const handleResize = () => {
-      setIsMobile(window.innerWidth < 768);
-      if (window.innerWidth >= 768) {
+      const mobile = window.innerWidth < 933;
+      setIsMobile(mobile);
+      setIsDesktop(!mobile);
+      
+      if (window.innerWidth >= 933) {
         setExpandedSection(null);
       }
     };
@@ -30,12 +34,13 @@ const Footer = () => {
   };
 
   return (
-    <footer className="relative bg-[#1A1F2C] text-gray-300">
+    <footer className="relative bg-[#1A1F2C] text-gray-300 w-full">
       <div className="absolute inset-0 bg-gradient-to-b from-[#1A1F2C]/30 to-[#1A1F2C] pointer-events-none"></div>
-      <div className="container mx-auto px-4 py-8 md:py-16 relative z-10">
-        <div className={`${isMobile ? 'flex flex-col space-y-4' : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12'}`}>
+      <div className={`${isMobile ? 'px-2 py-6' : 'container mx-auto px-4 py-8 md:py-12'} relative z-10`}>
+        {/* Main content grid */}
+        <div className={`${isMobile ? 'flex flex-col space-y-4 w-full' : 'grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-12'}`}>
           {/* Company Info */}
-          <div className={`backdrop-blur-sm flex flex-col ${isMobile ? 'pb-4 border-b border-gray-800' : ''}`}>
+          <div className={`backdrop-blur-sm flex flex-col ${isMobile ? 'pb-4 border-b border-gray-800 w-full px-3' : ''}`}>
             <h2 className="text-2xl font-bold mb-6 bg-gradient-to-r from-[#D4B86A] to-[#D4B86A]/80 bg-clip-text text-transparent">
               LooksX
             </h2>
@@ -46,7 +51,7 @@ const Footer = () => {
 
           {/* Quick Links */}
           {isMobile ? (
-            <div className="border-b border-gray-800 pb-4 flex flex-col">
+            <div className="border-b border-gray-800 pb-4 flex flex-col w-full px-3">
               <div 
                 className="flex justify-between items-center cursor-pointer" 
                 onClick={() => toggleSection('links')}
@@ -93,7 +98,7 @@ const Footer = () => {
 
           {/* Business Hours */}
           {isMobile ? (
-            <div className="border-b border-gray-800 pb-4 flex flex-col">
+            <div className="border-b border-gray-800 pb-4 flex flex-col w-full px-3">
               <div 
                 className="flex justify-between items-center cursor-pointer" 
                 onClick={() => toggleSection('hours')}
@@ -166,7 +171,7 @@ const Footer = () => {
 
           {/* Newsletter */}
           {isMobile ? (
-            <div className="pb-4 flex flex-col">
+            <div className="pb-4 flex flex-col w-full px-3">
               <div 
                 className="flex justify-between items-center cursor-pointer" 
                 onClick={() => toggleSection('newsletter')}
@@ -225,7 +230,7 @@ const Footer = () => {
 
           {/* Social Icons - Only for mobile, outside of accordions */}
           {isMobile && expandedSection !== 'hours' && (
-            <div className="flex justify-center space-x-6 py-4">
+            <div className="flex justify-center space-x-6 py-4 w-full">
               <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" 
                  className="text-gray-400 hover:text-[#D4B86A] transition-colors text-2xl">
                 <FaFacebookF />
@@ -246,14 +251,28 @@ const Footer = () => {
           )}
         </div>
 
-        {/* Copyright */}
-        <div className={`${isMobile ? 'mt-4 pt-4' : 'mt-16 pt-8'} border-t border-gray-800 text-center`}>
-          <p className="text-gray-500">&copy; 2025
-            <span className="bg-gradient-to-r from-[#D4B86A] to-[#D4B86A]/80 bg-clip-text text-transparent"> LooksX</span>. 
+        {/* Desktop Copyright - Moved outside the grid but inside container */}
+        {!isMobile && (
+          <div className="mt-12 pt-6 border-t border-gray-800">
+            <p className="text-gray-500 text-center">
+              &copy; {new Date().getFullYear()} 
+              <span className="bg-gradient-to-r from-[#D4B86A] to-[#D4B86A]/80 bg-clip-text text-transparent font-medium px-1">LooksX</span> 
+              All rights reserved.
+            </p>
+          </div>
+        )}
+      </div>
+      
+      {/* Copyright section for Mobile - Outside the container */}
+      {isMobile && (
+        <div className="mt-4 pt-4 px-2 border-t border-gray-800 text-center pb-6 relative z-10">
+          <p className="text-gray-500">
+            &copy; {new Date().getFullYear()} 
+            <span className="bg-gradient-to-r from-[#D4B86A] to-[#D4B86A]/80 bg-clip-text text-transparent font-medium px-1">LooksX</span> 
             All rights reserved.
           </p>
         </div>
-      </div>
+      )}
     </footer>
   );
 };

@@ -31,7 +31,7 @@ const Login = () => {
       if (response.data.role === 'barber') {
         navigate('/barber-dashboard');
       } else {
-        navigate('/customer-dashboard');
+        navigate('/');
       }
     } catch (err) {
       setError(err.response?.data?.message || 'Login failed');

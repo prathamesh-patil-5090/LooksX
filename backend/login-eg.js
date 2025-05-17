@@ -8,7 +8,7 @@ const config = {
   authRequired: false,
   auth0Logout: true,
   secret: '90bf65bfae75aeb42b08ddd99ecea72edc1906bca0a250a5084eaecbc69dbabb',
-  baseURL: 'http://localhost:3000',
+  baseURL: 'http://localhost:3000/',
   clientID: 'cBo8C44vhqEVnj4zHAdYVXlM5FySWmlA',
   issuerBaseURL: 'https://prathamesh-patil-5090.us.auth0.com',
   response_type: 'code',

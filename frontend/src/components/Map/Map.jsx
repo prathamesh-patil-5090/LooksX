@@ -30,8 +30,8 @@ const Map = () => {
           },
           body: new URLSearchParams({
             grant_type: 'client_credentials',
-            client_id: process.env.REACT_APP_MAPPLS_CLIENT_ID,
-            client_secret: process.env.REACT_APP_MAPPLS_CLIENT_SECRET,
+            client_id: import.meta.env.VITE_MAPPLS_CLIENT_ID, // Changed
+            client_secret: import.meta.env.VITE_MAPPLS_CLIENT_SECRET, // Changed
           }),
         });
 
@@ -82,40 +82,55 @@ const Map = () => {
 
     const initializeMap = () => {
       try {
+        console.log('Attempting to initialize map. Mappls SDK available:', !!window.mappls);
+        if (!window.mappls || !window.mappls.Map) {
+          console.error('Mappls SDK or Mappls.Map is not available. Scripts might not have loaded.');
+          // Optionally, try to load scripts again or show an error to the user
+          // For now, we'll log and let it potentially fail if Mappls is not ready.
+        }
         const map = new window.mappls.Map('map', {
-          center: [28.09, 78.3],
+          center: [28.09, 78.3], // Initial default center
           zoom: 5
         });
 
         // Store map reference
         window.map = map;
+        console.log('Map object created:', window.map);
 
         // Wait for map to load before getting location
         map.on('load', () => {
-          if (navigator.geolocation) {
-            navigator.geolocation.getCurrentPosition(
+          console.log('Map "load" event triggered.');
+          if (navigator.geolocation) { // Checks if the browser's Geolocation API is available
+            console.log('Geolocation API is available.');
+            navigator.geolocation.getCurrentPosition( // Attempts to get the user's current position
               position => {
+                console.log('Geolocation success. Position:', position);
                 const lat = position.coords.latitude;
                 const lng = position.coords.longitude;
+                console.log(`User's current location: Lat: ${lat}, Lng: ${lng}`);
                 
                 try {
-                  map.setCenter([lat, lng]);
+                  map.setCenter([lat, lng]); // Uses the current location to center the map
                   map.setZoom(13);
+                  console.log('Map centered and zoomed to user location.');
 
                   const options = {
                     divId: 'nearby_search',
                     map: map,
                     keywords: 'barber shop',
-                    location: [lat, lng],
-                    refLocation: `${lat},${lng}`,
+                    location: [lat, lng], // Uses current location for the nearby search
+                    refLocation: `${lat},${lng}`, // Uses current location as a reference point
                     fitbounds: true,
                     icon: {
                       url: 'https://apis.mappls.com/map_v3/1.png'
                     }
                   };
+                  console.log('Mappls nearby search options with user location:', options);
 
                   if (window.mappls && typeof window.mappls.nearby === 'function') {
+                    console.log('Calling window.mappls.nearby with user location.');
                     window.mappls.nearby(options, data => {
+                      console.log('Mappls nearby search callback data (user location):', data);
                       if (mounted && data && data.data) {
                         data.data = filterShops(data.data);
                         saveShopsData(data.data);
@@ -128,29 +143,68 @@ const Map = () => {
                         });
                       }
                     });
+                  } else {
+                    console.error('window.mappls.nearby function is not available when using user location.');
                   }
                 } catch (error) {
-                  console.error('Error in map initialization:', error);
+                  console.error('Error in map initialization after getting user location:', error);
                 }
               },
-              error => {
-                console.error('Geolocation error:', error);
+              error => { // This block is executed if getting the current position fails
+                console.error('Geolocation error:', error.message, 'Code:', error.code);
+                alert(`Geolocation error: ${error.message}. Using default location.`);
                 if (mounted) {
-                  initNearbySearch([28.632735, 77.219696]);
+                  // Falls back to a default location if current location cannot be fetched
+                  console.log('Falling back to default location due to geolocation error.');
+                  initNearbySearch([28.632735, 77.219696]); 
                 }
+              },
+              { // Options for getCurrentPosition
+                enableHighAccuracy: true,
+                timeout: 10000, // 10 seconds
+                maximumAge: 0 // Force fresh location
               }
             );
+          } else {
+            // This block is executed if Geolocation API is not supported by the browser
+            console.error('Geolocation is not supported by this browser.');
+            alert('Geolocation is not supported by this browser. Using default location.');
+            if (mounted) {
+              // Falls back to a default location
+              console.log('Falling back to default location because geolocation is not supported.');
+              initNearbySearch([28.632735, 77.219696]);
+            }
           }
         });
+
+        map.on('error', (e) => {
+          console.error('Map error event:', e);
+        });
+
       } catch (error) {
-        console.error('Map initialization error:', error);
+        console.error('Map initialization error (outer try-catch):', error);
       }
     };
 
     const setupMap = async () => {
-      await fetchOAuthToken();
-      await loadMapScripts();
-      initializeMap();
+      console.log('setupMap: Starting setup.');
+      try {
+        await fetchOAuthToken(); // This sets oauthToken, triggering re-render if successful
+        // The rest of the logic (loadMapScripts, initializeMap) should ideally run
+        // after oauthToken is confirmed to be set and valid.
+        // The useEffect dependency on oauthToken handles this.
+        if (oauthToken) { // Check if token is available before proceeding
+          console.log('setupMap: OAuth token available, proceeding to load scripts.');
+          await loadMapScripts();
+          console.log('setupMap: Map scripts loaded.');
+          initializeMap();
+        } else {
+          console.log('setupMap: OAuth token not yet available. Waiting for token fetch.');
+          // fetchOAuthToken will set the state, and useEffect will re-run
+        }
+      } catch (error) {
+        console.error('Error in setupMap promise chain:', error);
+      }
     };
 
     setupMap()
@@ -235,6 +289,7 @@ const Map = () => {
   }
 
   function initNearbySearch(location) {
+    console.log('initNearbySearch called with location:', location);
     const [lat, lng] = location;
     const options = {
       divId: 'nearby_search',
@@ -253,20 +308,27 @@ const Map = () => {
         }
       }
     };
+    console.log('Mappls nearby search options (initNearbySearch):', options);
 
-    window.mappls.nearby(options, (data) => {
-      if (data && data.data) {
-        data.data = filterShops(data.data);
-        saveShopsData(data.data);
-        
-        const container = document.getElementById('nearby_search');
-        container.innerHTML = '<h3>Nearby Barber Shops</h3>';
-        
-        data.data.forEach(place => {
-          container.appendChild(createShopListItem(place));
-        });
-      }
-    });
+    if (window.mappls && typeof window.mappls.nearby === 'function') {
+      console.log('Calling window.mappls.nearby from initNearbySearch.');
+      window.mappls.nearby(options, (data) => {
+        console.log('Mappls nearby search callback data (initNearbySearch):', data);
+        if (data && data.data) {
+          data.data = filterShops(data.data);
+          saveShopsData(data.data);
+          
+          const container = document.getElementById('nearby_search');
+          container.innerHTML = '<h3>Nearby Barber Shops</h3>';
+          
+          data.data.forEach(place => {
+            container.appendChild(createShopListItem(place));
+          });
+        }
+      });
+    } else {
+      console.error('window.mappls.nearby function is not available in initNearbySearch.');
+    }
   }
 
   function filterShops(shops) {

@@ -1,18 +1,24 @@
-import React from "react";
+import React, { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 import { Swiper, SwiperSlide } from 'swiper/react';
-import { EffectCards, Autoplay, Pagination } from 'swiper/modules';
+import { Autoplay, Pagination } from 'swiper/modules';
 import 'swiper/css';
-import 'swiper/css/effect-cards';
 import 'swiper/css/pagination';
 import beard1 from "../assets/img/service-6.jpg";
 import beard2 from "../assets/img/service-8.jpg";
 import beard3 from "../assets/img/service-1.jpg";
 import { FaRegClock, FaStar } from 'react-icons/fa';
 
+// Improved ImageCard with hardware acceleration and optimized rendering
 const ImageCard = ({ img, title, description, price, rating, specialFeature }) => (
-  <div className="relative overflow-hidden rounded-xl bg-black/30 backdrop-blur-sm border border-gray-800">
-    <img src={img} alt={title} className="w-full h-[60%] object-cover" />
+  <div className="relative overflow-hidden rounded-xl bg-black/30 backdrop-blur-sm border border-gray-800" 
+       style={{ transform: 'translateZ(0)', willChange: 'transform' }}>
+    <img 
+      src={img} 
+      alt={title} 
+      className="w-full h-[60%] object-cover" 
+      loading="eager" 
+    />
     <div className="absolute inset-0 bg-gradient-to-t from-black/90 via-black/50 to-transparent" />
     <div className="absolute bottom-0 left-0 right-0 p-4">
       <h3 className="text-[#D4B86A] text-lg font-bold mb-1">{title}</h3>
@@ -63,6 +69,14 @@ const MobileIntro = () => {
     }
   ];
 
+  // Preload images to prevent layout shifts
+  useEffect(() => {
+    styleData.forEach(item => {
+      const img = new Image();
+      img.src = item.img;
+    });
+  }, []);
+
   return (
     <div className="min-h-screen bg-[#0d0f15] relative overflow-hidden flex flex-col">
       <div className="absolute inset-0 bg-gradient-to-b from-[#D4B86A]/5 to-transparent opacity-60" />
@@ -75,31 +89,36 @@ const MobileIntro = () => {
         </div>
         
         <div className="flex-1 flex flex-col justify-center">
-          <Swiper
-            effect={'cards'}
-            grabCursor={true}
-            modules={[EffectCards, Autoplay, Pagination]}
-            spaceBetween={20}
-            centeredSlides={true}
-            loop={true}
-            autoplay={{
-              delay: 3500,
-              disableOnInteraction: false,
-            }}
-            pagination={{
-              clickable: true,
-              bulletActiveClass: 'swiper-pagination-bullet-active !bg-[#D4B86A]'
-            }}
-            className="w-full max-w-[300px] mx-auto h-[400px]"
-          >
-            {styleData.map((item, index) => (
-              <SwiperSlide key={index}>
-                <div className="px-1">
-                  <ImageCard {...item} />
-                </div>
-              </SwiperSlide>
-            ))}
-          </Swiper>
+          <div className="swiper-container-wrapper pb-8">
+            <Swiper
+              modules={[Autoplay, Pagination]}
+              spaceBetween={20}
+              slidesPerView={1.2}
+              centeredSlides={true}
+              loop={true}
+              speed={600}
+              autoplay={{
+                delay: 3500,
+                disableOnInteraction: false,
+              }}
+              pagination={{
+                clickable: true,
+                bulletActiveClass: 'swiper-pagination-bullet-active !bg-[#D4B86A]'
+              }}
+              className="w-full py-4"
+              observer={true}
+              observeParents={true}
+              preloadImages={true}
+            >
+              {styleData.map((item, index) => (
+                <SwiperSlide key={index}>
+                  <div className="px-1">
+                    <ImageCard {...item} />
+                  </div>
+                </SwiperSlide>
+              ))}
+            </Swiper>
+          </div>
           
           <div className="text-center mt-8">
             <p className="text-gray-300 text-sm leading-relaxed mb-6 max-w-xs mx-auto px-2">

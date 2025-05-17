@@ -38,8 +38,8 @@ router.get('/', protect, async (req, res) => {
 router.get('/customer/:customerId', protect, async (req, res) => {
     try {
         const appointments = await Appointment.find({ 
-            customerId: req.params.customerId 
-        }).sort({ date: -1 }); // Sort by date descending
+            userId: req.params.customerId // Changed from customerId to userId
+        }).sort({ appointmentDate: -1 }); // Changed from date to appointmentDate
 
         res.json(appointments);
     } catch (err) {
@@ -49,9 +49,9 @@ router.get('/customer/:customerId', protect, async (req, res) => {
 
 // Universal update route with role-based permissions
 router.patch('/:id/status', protect, async (req, res) => {
-    // Set CORS headers specifically for this route
-    res.header('Access-Control-Allow-Methods', 'PATCH');
-    res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
+    // These headers should be handled by the global CORS middleware
+    // res.header('Access-Control-Allow-Methods', 'PATCH');
+    // res.header('Access-Control-Allow-Headers', 'Content-Type, Authorization');
     
     try {
         const { id } = req.params;

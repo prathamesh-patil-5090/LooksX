@@ -46,3 +46,19 @@ code {
 }
 
 /* Remove any background-image references if they exist */
+
+/* Swiper styles */
+.swiper-slide {
+  background-position: center;
+  background-size: cover;
+}
+
+.swiper-slide img {
+  display: block;
+  transform: scale(0.85);
+  transition: transform 0.3s;
+}
+
+.swiper-slide-active img {
+  transform: scale(1);
+}

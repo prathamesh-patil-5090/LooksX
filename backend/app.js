@@ -10,17 +10,20 @@ const app = express();
 
 // Enhanced CORS configuration
 const corsOptions = {
-  origin: 'http://localhost:3000',
+  origin: 'http://localhost:3000', // Removed trailing slash
   methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
   allowedHeaders: ['Content-Type', 'Authorization'],
   credentials: true,
-  optionsSuccessStatus: 200,
-  preflightContinue: false
+  optionsSuccessStatus: 200, // For legacy browser compatibility
+  // preflightContinue: false // Default is false, so explicitly setting it is optional
 };
 
-// Apply CORS middleware
+// Apply CORS middleware - this should be one of the first middleware
 app.use(cors(corsOptions));
 
+// The cors(corsOptions) middleware should handle preflight OPTIONS requests.
+// Manual handling below is redundant and can conflict.
+/*
 // Handle OPTIONS preflight for all routes
 app.options('*', (req, res) => {
   res.header('Access-Control-Allow-Methods', 'GET, POST, PUT, PATCH, DELETE, OPTIONS');
@@ -36,6 +39,7 @@ app.use((req, res, next) => {
   res.header('Access-Control-Allow-Credentials', 'true');
   next();
 });
+*/
 
 app.use(express.json());
 app.use(express.urlencoded({ extended: true }));

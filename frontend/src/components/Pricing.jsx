@@ -215,29 +215,29 @@ const Pricing = () => {
   );
 
   return (
-    <div className="bg-[#0d0f15] relative h-screen">
+    <div className="bg-[#0d0f15] relative min-h-screen overflow-hidden">
       <div className="absolute inset-0 bg-gradient-to-b from-[#D4B86A]/5 to-transparent opacity-60" />
-      <div className="container mx-auto px-4 py-4 relative h-full flex flex-col">
-        <div className="text-center mb-4">
-          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#D4B86A] mb-1">
+      <div className="container mx-auto px-4 py-8 relative flex flex-col h-full">
+        <div className="text-center mb-6">
+          <h2 className="text-2xl sm:text-3xl font-extrabold text-[#D4B86A] mb-2">
             Premium Services
           </h2>
           <p className="text-xs md:text-sm text-gray-400 max-w-2xl mx-auto">
             Discover our extensive range of luxury salon services
           </p>
         </div>
-        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-3 flex-1">
+        <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4 auto-rows-max">
           {currentItems.map((item, index) => (
             <PriceCard key={index} {...item} />
           ))}
         </div>
-        <div className="flex justify-center gap-2 py-3">
+        <div className="flex justify-center gap-2 py-6 mt-auto">
           {[...Array(pageCount)].map((_, i) => (
             <button
               key={i}
               onClick={() => setCurrentPage(i)}
-              className={`w-2 h-2 rounded-full ${
-                currentPage === i ? 'bg-[#D4B86A]' : 'bg-gray-600'
+              className={`w-2 h-2 rounded-full transition-colors duration-300 ${
+                currentPage === i ? 'bg-[#D4B86A]' : 'bg-gray-600 hover:bg-gray-500'
               }`}
             />
           ))}
