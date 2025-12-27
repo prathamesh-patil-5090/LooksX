@@ -1,18 +1,18 @@
-const express = require('express');
-const cors = require('cors');
-const mongoose = require('mongoose');
-const userRoutes = require('./routes/userRoutes');
-const barberRoutes = require('./routes/barberRoutes');
-const appointmentRoutes = require('./routes/appointmentRoutes');
-require('dotenv').config();
+const express = require("express");
+const cors = require("cors");
+const mongoose = require("mongoose");
+const userRoutes = require("./routes/userRoutes");
+const barberRoutes = require("./routes/barberRoutes");
+const appointmentRoutes = require("./routes/appointmentRoutes");
+require("dotenv").config();
 
 const app = express();
 
 // Enhanced CORS configuration
 const corsOptions = {
   origin: process.env.CONNECTION_URL, // Use CONNECTION_URL from .env
-  methods: ['GET', 'POST', 'PUT', 'PATCH', 'DELETE', 'OPTIONS'],
-  allowedHeaders: ['Content-Type', 'Authorization'],
+  methods: ["GET", "POST", "PUT", "PATCH", "DELETE", "OPTIONS"],
+  allowedHeaders: ["Content-Type", "Authorization"],
   credentials: true,
   optionsSuccessStatus: 200, // For legacy browser compatibility
   // preflightContinue: false // Default is false, so explicitly setting it is optional
@@ -45,20 +45,21 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: true }));
 
 // Routes
-app.use('/api/users', userRoutes);
-app.use('/api/barber', barberRoutes);
-app.use('/api/appointments', appointmentRoutes);
+app.use("/api/users", userRoutes);
+app.use("/api/barber", barberRoutes);
+app.use("/api/appointments", appointmentRoutes);
 
 // Error handling middleware
 app.use((err, req, res, next) => {
   console.error(err.stack);
-  res.status(500).json({ message: 'Something went wrong!' });
+  res.status(500).json({ message: "Something went wrong!" });
 });
 
 // MongoDB connection
-mongoose.connect(process.env.MONGO_URL)
+mongoose
+  .connect(process.env.MONGO_URL)
   .then(() => {
-    console.log('Connected to MongoDB');
+    console.log("Connected to MongoDB");
     // Start server only after DB connection
     const PORT = process.env.PORT || 8800;
     app.listen(PORT, () => {
@@ -66,7 +67,7 @@ mongoose.connect(process.env.MONGO_URL)
     });
   })
   .catch((error) => {
-    console.log('MongoDB connection error:', error);
+    console.log("MongoDB connection error:", error);
   });
 
 module.exports = app;
